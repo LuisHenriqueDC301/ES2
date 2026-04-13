@@ -1,17 +1,23 @@
-// src/services/pedidoService.ts
-
-import { ENDPOINTS } from "../endpoints";
+import { ENDPOINTS } from "../constants/endpoints";
 import type { Pedido, AdicionarItemPayload } from "../types";
+
+async function handleResponse<T>(res: Response): Promise<T> {
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`HTTP ${res.status}: ${text || res.statusText}`);
+  }
+  return res.json();
+}
 
 export const pedidoService = {
   listar: async (): Promise<Pedido[]> => {
     const res = await fetch(ENDPOINTS.pedidos.listar);
-    return res.json();
+    return handleResponse(res);
   },
 
   buscarPorId: async (id: number): Promise<Pedido> => {
     const res = await fetch(ENDPOINTS.pedidos.buscarPorId(id));
-    return res.json();
+    return handleResponse(res);
   },
 
   cadastrar: async (): Promise<Pedido> => {
@@ -20,7 +26,7 @@ export const pedidoService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
     });
-    return res.json();
+    return handleResponse(res);
   },
 
   adicionarItem: async (
@@ -32,6 +38,6 @@ export const pedidoService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dados),
     });
-    return res.json();
+    return handleResponse(res);
   },
 };

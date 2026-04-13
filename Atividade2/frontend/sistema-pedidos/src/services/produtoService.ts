@@ -1,6 +1,4 @@
-// src/services/produtoService.ts
-
-import { ENDPOINTS } from "../endpoints";
+import { ENDPOINTS } from "../constants/endpoints";
 import type {
   Produto,
   ProdutoEletronico,
@@ -9,15 +7,23 @@ import type {
   CadastrarPerecivelPayload,
 } from "../types";
 
+async function handleResponse<T>(res: Response): Promise<T> {
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`HTTP ${res.status}: ${text || res.statusText}`);
+  }
+  return res.json();
+}
+
 export const produtoService = {
   listar: async (): Promise<Produto[]> => {
     const res = await fetch(ENDPOINTS.produtos.listar);
-    return res.json();
+    return handleResponse(res);
   },
 
   buscarPorId: async (id: number): Promise<Produto> => {
     const res = await fetch(ENDPOINTS.produtos.buscarPorId(id));
-    return res.json();
+    return handleResponse(res);
   },
 
   alterar: async (id: number, dados: Partial<Produto>): Promise<Produto> => {
@@ -26,17 +32,23 @@ export const produtoService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dados),
     });
-    return res.json();
+    return handleResponse(res);
   },
 
   excluir: async (id: number): Promise<void> => {
-    await fetch(ENDPOINTS.produtos.excluir(id), { method: "DELETE" });
+    const res = await fetch(ENDPOINTS.produtos.excluir(id), {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status}: ${text || res.statusText}`);
+    }
   },
 
   eletronicos: {
     listar: async (): Promise<ProdutoEletronico[]> => {
       const res = await fetch(ENDPOINTS.produtos.eletronicos.listar);
-      return res.json();
+      return handleResponse(res);
     },
 
     cadastrar: async (
@@ -47,14 +59,14 @@ export const produtoService = {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dados),
       });
-      return res.json();
+      return handleResponse(res);
     },
   },
 
   pereciveis: {
     listar: async (): Promise<ProdutoPerecivel[]> => {
       const res = await fetch(ENDPOINTS.produtos.pereciveis.listar);
-      return res.json();
+      return handleResponse(res);
     },
 
     cadastrar: async (
@@ -65,7 +77,7 @@ export const produtoService = {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dados),
       });
-      return res.json();
+      return handleResponse(res);
     },
   },
 };
