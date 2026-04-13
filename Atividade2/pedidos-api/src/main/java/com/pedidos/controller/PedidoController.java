@@ -1,0 +1,61 @@
+package com.pedidos.controller;
+
+import com.pedidos.model.Item;
+import com.pedidos.model.Pedido;
+import com.pedidos.model.Produto;
+import com.pedidos.repository.PedidoRepository;
+import com.pedidos.repository.ProdutoRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/pedidos")
+public class PedidoController {
+
+    private final PedidoRepository pedidoRepository;
+    private final ProdutoRepository produtoRepository;
+
+    public PedidoController(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository) {
+        this.pedidoRepository = pedidoRepository;
+        this.produtoRepository = produtoRepository;
+    }
+
+    @GetMapping
+    public List<Pedido> listar() {
+        return pedidoRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Pedido> consultar(@PathVariable Long id) {
+        return pedidoRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public Pedido cadastrar(@RequestBody Pedido pedido) {
+        return pedidoRepository.save(pedido);
+    }
+
+    /**
+     * Adiciona um item ao pedido.
+     * Body: { "produtoId": 1, "qtde": 2 }
+     */
+    @PostMapping("/{id}/itens")
+    public ResponseEntity<Pedido> adicionarItem(@PathVariable Long id,
+                                                @RequestBody Map<String, Object> body) {
+        Long produtoId = Long.valueOf(body.get("produtoId").toString());
+        Integer qtde = Integer.valueOf(body.get("qtde").toString());
+
+        return pedidoRepository.findById(id).map(pedido ->
+                produtoRepository.findById(produtoId).map(produto -> {
+                    Item item = new Item(qtde, produto);
+                    pedido.adicionarItem(item);
+                    return ResponseEntity.ok(pedidoRepository.save(pedido));
+                }).orElse(ResponseEntity.notFound().build())
+        ).orElse(ResponseEntity.notFound().build());
+    }
+}
