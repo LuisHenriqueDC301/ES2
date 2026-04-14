@@ -3,11 +3,13 @@ export function Input({
   name,
   type = "text",
   step,
+  defaultValue,
 }: {
   label: string;
   name: string;
   type?: string;
   step?: string;
+  defaultValue?: string;
 }) {
   return (
     <label className="flex flex-col gap-1.5">
@@ -16,6 +18,7 @@ export function Input({
         name={name}
         type={type}
         step={step}
+        defaultValue={defaultValue}
         required
         className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 outline-none transition-colors focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100"
       />
