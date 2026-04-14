@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  useProdutos,
   useProdutosEletronicos,
   useProdutosPereciveis,
 } from "../../hooks/useProdutos";
@@ -22,8 +23,32 @@ const produtoTabs: { key: Tab; label: string }[] = [
 export function ProdutosPage() {
   const [tab, setTab] = useState<Tab>("todos");
   const [modalAberto, setModalAberto] = useState(false);
-  const { cadastrar: cadastrarEletronico } = useProdutosEletronicos();
-  const { cadastrar: cadastrarPerecivel } = useProdutosPereciveis();
+
+  const { produtos, loading, error, carregar: recarregarTodos, alterar: alterarBase, excluir: excluirBase } = useProdutos();
+  const { produtos: eletronicos, loading: loadingEl, error: errorEl, cadastrar: cadastrarEletronico, carregar: recarregarEletronicos } = useProdutosEletronicos();
+  const { produtos: pereciveis, loading: loadingPe, error: errorPe, cadastrar: cadastrarPerecivel, carregar: recarregarPerecivel } = useProdutosPereciveis();
+
+  const recarregarTudo = () => Promise.all([recarregarTodos(), recarregarEletronicos(), recarregarPerecivel()]);
+
+  const handleCadastrarEletronico = async (dados: Parameters<typeof cadastrarEletronico>[0]) => {
+    await cadastrarEletronico(dados);
+    await recarregarTudo();
+  };
+
+  const handleCadastrarPerecivel = async (dados: Parameters<typeof cadastrarPerecivel>[0]) => {
+    await cadastrarPerecivel(dados);
+    await recarregarTudo();
+  };
+
+  const handleAlterar = async (id: number, dados: Parameters<typeof alterarBase>[1]) => {
+    await alterarBase(id, dados);
+    await recarregarTudo();
+  };
+
+  const handleExcluir = async (id: number) => {
+    await excluirBase(id);
+    await recarregarTudo();
+  };
 
   return (
     <div>
@@ -48,15 +73,15 @@ export function ProdutosPage() {
         <ProdutoTabs<Tab> tabs={produtoTabs} active={tab} onChange={setTab} />
       </div>
 
-      {tab === "todos" && <TodosProdutos />}
-      {tab === "eletronicos" && <EletronicosTab />}
-      {tab === "pereciveis" && <PerecivelTab />}
+      {tab === "todos" && <TodosProdutos produtos={produtos} loading={loading} error={error} alterar={handleAlterar} excluir={handleExcluir} />}
+      {tab === "eletronicos" && <EletronicosTab produtos={eletronicos} loading={loadingEl} error={errorEl} />}
+      {tab === "pereciveis" && <PerecivelTab produtos={pereciveis} loading={loadingPe} error={errorPe} />}
 
       <NovoProdutoModal
         open={modalAberto}
         onClose={() => setModalAberto(false)}
-        onCadastrarEletronico={cadastrarEletronico}
-        onCadastrarPerecivel={cadastrarPerecivel}
+        onCadastrarEletronico={handleCadastrarEletronico}
+        onCadastrarPerecivel={handleCadastrarPerecivel}
       />
     </div>
   );

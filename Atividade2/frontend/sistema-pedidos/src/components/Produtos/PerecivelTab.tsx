@@ -1,8 +1,13 @@
-import { useProdutosPereciveis } from "../../hooks/useProdutos";
 import { LoadingState, ErrorState, EmptyState } from "../common";
+import type { ProdutoPerecivel } from "../../types";
 
-export function PerecivelTab() {
-  const { produtos, loading, error } = useProdutosPereciveis();
+type Props = {
+  produtos: ProdutoPerecivel[];
+  loading: boolean;
+  error: string | null;
+};
+
+export function PerecivelTab({ produtos, loading, error }: Props) {
 
   if (loading) return <LoadingState />;
   if (error) return <ErrorState message={error} />;

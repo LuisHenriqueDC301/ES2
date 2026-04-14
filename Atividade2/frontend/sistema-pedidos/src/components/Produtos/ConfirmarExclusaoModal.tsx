@@ -6,11 +6,13 @@ export function ConfirmarExclusaoModal({
   onClose,
   produtoNome,
   onConfirm,
+  onErro,
 }: {
   open: boolean;
   onClose: () => void;
   produtoNome: string;
   onConfirm: () => Promise<void>;
+  onErro?: (msg: string) => void;
 }) {
   const [excluindo, setExcluindo] = useState(false);
 
@@ -18,6 +20,9 @@ export function ConfirmarExclusaoModal({
     setExcluindo(true);
     try {
       await onConfirm();
+      onClose();
+    } catch {
+      onErro?.(`Não foi possível excluir "${produtoNome}". Ele pode estar vinculado a um pedido.`);
       onClose();
     } finally {
       setExcluindo(false);

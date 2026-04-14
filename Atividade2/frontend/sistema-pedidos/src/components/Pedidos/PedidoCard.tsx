@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { AdicionarItemPayload, Pedido } from "../../types";
 
 export function PedidoCard({
@@ -18,6 +18,7 @@ export function PedidoCard({
   ) => Promise<void>;
 }) {
   const [adicionando, setAdicionando] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,7 +29,7 @@ export function PedidoCard({
         produtoId: Number(fd.get("produtoId")),
         qtde: Number(fd.get("qtde")),
       });
-      e.currentTarget.reset();
+      formRef.current?.reset();
     } finally {
       setAdicionando(false);
     }
@@ -102,6 +103,7 @@ export function PedidoCard({
           )}
 
           <form
+            ref={formRef}
             onSubmit={handleSubmit}
             className="flex flex-wrap items-end gap-3 rounded-xl bg-slate-50 p-4"
           >

@@ -1,8 +1,13 @@
-import { useProdutosEletronicos } from "../../hooks/useProdutos";
 import { LoadingState, ErrorState, EmptyState } from "../common";
+import type { ProdutoEletronico } from "../../types";
 
-export function EletronicosTab() {
-  const { produtos, loading, error } = useProdutosEletronicos();
+type Props = {
+  produtos: ProdutoEletronico[];
+  loading: boolean;
+  error: string | null;
+};
+
+export function EletronicosTab({ produtos, loading, error }: Props) {
 
   if (loading) return <LoadingState />;
   if (error) return <ErrorState message={error} />;

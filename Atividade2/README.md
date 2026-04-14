@@ -5,14 +5,12 @@ Sistema simples de gerenciamento de pedidos e produtos.
 ## Tecnologias
 
 **Backend**
-
 - Java 17
 - Spring Boot 3.2
 - Spring Data JPA
-- MySQL
+- MySQL (via Docker)
 
 **Frontend**
-
 - React 19
 - TypeScript
 - Tailwind CSS 4
@@ -22,23 +20,34 @@ Sistema simples de gerenciamento de pedidos e produtos.
 ## Pré-requisitos
 
 - Java 17+
-- Maven
-- Yarn
+- Docker e Docker Compose
+- Node.js + Yarn
 
 ## Como rodar
 
-### Backend
-
-Antes de rodar, configure a senha do banco em `pedidos-api/src/main/resources/application.properties`. A senha foi enviada no comentário do envio.
+### 1. Banco de dados
 
 ```bash
 cd pedidos-api
+docker-compose up -d
+```
+
+### 2. Backend
+
+```bash
+cd pedidos-api
+cp src/main/resources/application.properties.example src/main/resources/application.properties
 ./mvnw spring-boot:run
 ```
 
-Roda em `http://localhost:8080`. O banco MySQL já está configurado no `application.properties`.
+> Se o Maven da máquina estiver configurado com mirrors corporativos, use o settings local:
+> ```bash
+> mvn -s .mvn/settings.xml spring-boot:run
+> ```
 
-### Frontend
+Roda em `http://localhost:8080`.
+
+### 3. Frontend
 
 ```bash
 cd frontend/sistema-pedidos
@@ -46,8 +55,19 @@ yarn
 yarn dev
 ```
 
-Roda em `http://localhost:5173`. A URL do backend é configurada em `.env`:
+Roda em `http://localhost:5173`.
+
+A URL do backend é configurada via `.env`:
 
 ```
 VITE_BACKEND_URL=http://localhost:8080
 ```
+
+### Parar o banco
+
+```bash
+cd pedidos-api
+docker-compose down
+```
+
+> Os dados ficam persistidos no volume Docker entre restarts.

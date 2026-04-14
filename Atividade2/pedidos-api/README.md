@@ -5,20 +5,17 @@ API REST construída com Spring Boot, Hibernate e MySQL (via Docker).
 ## Pré-requisitos
 
 - Java 17+
-- Maven 3.8+
 - Docker e Docker Compose
 
 ## Configuração
 
-O arquivo `application.properties` está no `.gitignore` para proteger as credenciais. Antes de rodar, crie o seu a partir do exemplo:
+O arquivo `application.properties` está no `.gitignore`. Crie o seu a partir do exemplo:
 
 ```bash
 cp src/main/resources/application.properties.example src/main/resources/application.properties
 ```
 
 ## Como rodar
-
-O projeto usa um `settings.xml` local para ignorar mirrors corporativos do Maven e baixar as dependências direto do Maven Central.
 
 **1. Sobe o banco MySQL:**
 ```bash
@@ -27,8 +24,13 @@ docker-compose up -d
 
 **2. Roda a API:**
 ```bash
-mvn -s .mvn/settings.xml spring-boot:run
+./mvnw spring-boot:run
 ```
+
+> Se o Maven da máquina estiver configurado com mirrors corporativos, use o settings local:
+> ```bash
+> mvn -s .mvn/settings.xml spring-boot:run
+> ```
 
 A aplicação sobe em `http://localhost:8080`.
 
@@ -37,7 +39,7 @@ A aplicação sobe em `http://localhost:8080`.
 docker-compose down
 ```
 
-> Os dados ficam persistidos no volume Docker, não são perdidos ao reiniciar o container.
+> Os dados ficam persistidos no volume Docker entre restarts.
 
 ---
 
@@ -55,11 +57,7 @@ docker-compose down
 
 Body exemplo:
 ```json
-{
-  "nome": "Camiseta",
-  "preco": 49.90,
-  "estoque": 50
-}
+{ "nome": "Camiseta", "preco": 49.90, "estoque": 50 }
 ```
 
 #### Eletrônicos
@@ -71,12 +69,7 @@ Body exemplo:
 
 Body exemplo:
 ```json
-{
-  "nome": "Notebook",
-  "preco": 3500.00,
-  "estoque": 10,
-  "voltagem": 110
-}
+{ "nome": "Notebook", "preco": 3500.00, "estoque": 10, "voltagem": 110 }
 ```
 
 #### Perecíveis
@@ -88,12 +81,7 @@ Body exemplo:
 
 Body exemplo:
 ```json
-{
-  "nome": "Leite",
-  "preco": 5.50,
-  "estoque": 100,
-  "dataValidade": "2026-12-31"
-}
+{ "nome": "Leite", "preco": 5.50, "estoque": 100, "dataValidade": "2026-12-31" }
 ```
 
 ---
@@ -107,17 +95,9 @@ Body exemplo:
 | POST | `/pedidos` | Cadastra pedido |
 | POST | `/pedidos/{id}/itens` | Adiciona item ao pedido |
 
-Body para cadastrar pedido:
-```json
-{}
-```
-
 Body para adicionar item:
 ```json
-{
-  "produtoId": 1,
-  "qtde": 2
-}
+{ "produtoId": 1, "qtde": 2 }
 ```
 
 O `valorTotal` do pedido é recalculado automaticamente ao adicionar itens.
@@ -127,11 +107,6 @@ O `valorTotal` do pedido é recalculado automaticamente ao adicionar itens.
 ## Exemplos com curl
 
 ```bash
-# Cadastrar produto base
-curl -X POST http://localhost:8080/produtos \
-  -H "Content-Type: application/json" \
-  -d '{"nome": "Camiseta", "preco": 49.90, "estoque": 50}'
-
 # Cadastrar eletrônico
 curl -X POST http://localhost:8080/produtos/eletronicos \
   -H "Content-Type: application/json" \

@@ -1,14 +1,21 @@
 import { useState } from "react";
-import { useProdutos } from "../../hooks/useProdutos";
-import { LoadingState, ErrorState, EmptyState } from "../common";
+import { LoadingState, ErrorState, EmptyState, Toast } from "../common";
 import { EditarProdutoModal } from "./EditarProdutoModal";
 import { ConfirmarExclusaoModal } from "./ConfirmarExclusaoModal";
 import type { Produto } from "../../types";
 
-export function TodosProdutos() {
-  const { produtos, loading, error, alterar, excluir } = useProdutos();
+type Props = {
+  produtos: Produto[];
+  loading: boolean;
+  error: string | null;
+  alterar: (id: number, dados: Partial<Produto>) => Promise<void>;
+  excluir: (id: number) => Promise<void>;
+};
+
+export function TodosProdutos({ produtos, loading, error, alterar, excluir }: Props) {
   const [editando, setEditando] = useState<Produto | null>(null);
   const [excluindo, setExcluindo] = useState<Produto | null>(null);
+  const [toastErro, setToastErro] = useState<string | null>(null);
 
   if (loading) return <LoadingState />;
   if (error) return <ErrorState message={error} />;
@@ -90,8 +97,11 @@ export function TodosProdutos() {
           onClose={() => setExcluindo(null)}
           produtoNome={excluindo.nome}
           onConfirm={() => excluir(excluindo.id)}
+          onErro={setToastErro}
         />
       )}
+
+      {toastErro && <Toast message={toastErro} onClose={() => setToastErro(null)} />}
     </>
   );
 }
