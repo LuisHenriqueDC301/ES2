@@ -81,7 +81,7 @@ export function HomePage() {
       </div>
 
       <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">
-        Sistema de Pedidos
+        Organiza Aí
       </h1>
       <p className="max-w-sm text-center text-slate-500 mb-12">
         Gerencie seu catálogo de produtos e acompanhe pedidos em um só lugar.
