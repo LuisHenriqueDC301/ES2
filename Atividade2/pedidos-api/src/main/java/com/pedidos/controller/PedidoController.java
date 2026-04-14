@@ -6,6 +6,7 @@ import com.pedidos.model.Produto;
 import com.pedidos.repository.PedidoRepository;
 import com.pedidos.repository.ProdutoRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/pedidos")
+@CrossOrigin(origins = "*")
 public class PedidoController {
 
     private final PedidoRepository pedidoRepository;
@@ -45,6 +47,7 @@ public class PedidoController {
      * Body: { "produtoId": 1, "qtde": 2 }
      */
     @PostMapping("/{id}/itens")
+    @Transactional
     public ResponseEntity<Pedido> adicionarItem(@PathVariable Long id,
                                                 @RequestBody Map<String, Object> body) {
         Long produtoId = Long.valueOf(body.get("produtoId").toString());

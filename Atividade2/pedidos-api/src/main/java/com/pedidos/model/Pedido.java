@@ -1,5 +1,6 @@
 package com.pedidos.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Pedido {
 
     // Agregação: Pedido (todo) -> Itens (partes), 1..1 para 1..*
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Item> itens = new ArrayList<>();
 
     public Pedido() {

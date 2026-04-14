@@ -1,5 +1,6 @@
 package com.pedidos.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,13 +15,14 @@ public class Item {
     private Double valorItem;
 
     // Associação com Produto: muitos itens -> 1 produto
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "produto_id", nullable = false)
     private Produto produto;
 
     // Referência ao pedido dono (lado inverso da agregação)
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
+    @JsonBackReference
     private Pedido pedido;
 
     public Item() {}

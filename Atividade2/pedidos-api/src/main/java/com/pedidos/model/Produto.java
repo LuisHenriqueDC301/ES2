@@ -1,10 +1,12 @@
 package com.pedidos.model;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "produto")
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 public class Produto {
 
     @Id
