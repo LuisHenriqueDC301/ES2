@@ -7,8 +7,8 @@ export function usePedidos() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const carregar = useCallback(async () => {
-    setLoading(true);
+  const carregar = useCallback(async (showLoading = true) => {
+    if (showLoading) setLoading(true);
     setError(null);
     try {
       setPedidos(await pedidoService.listar());
@@ -34,7 +34,7 @@ export function usePedidos() {
     dados: AdicionarItemPayload,
   ) => {
     await pedidoService.adicionarItem(pedidoId, dados);
-    await carregar();
+    await carregar(false);
   };
 
   return { pedidos, loading, error, carregar, cadastrar, adicionarItem };

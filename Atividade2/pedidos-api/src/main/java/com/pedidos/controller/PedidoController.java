@@ -2,7 +2,7 @@ package com.pedidos.controller;
 
 import com.pedidos.model.Item;
 import com.pedidos.model.Pedido;
-import com.pedidos.model.Produto;
+import com.pedidos.repository.ItemRepository;
 import com.pedidos.repository.PedidoRepository;
 import com.pedidos.repository.ProdutoRepository;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +19,14 @@ public class PedidoController {
 
     private final PedidoRepository pedidoRepository;
     private final ProdutoRepository produtoRepository;
+    private final ItemRepository itemRepository;
 
-    public PedidoController(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository) {
+    public PedidoController(PedidoRepository pedidoRepository,
+                            ProdutoRepository produtoRepository,
+                            ItemRepository itemRepository) {
         this.pedidoRepository = pedidoRepository;
         this.produtoRepository = produtoRepository;
+        this.itemRepository = itemRepository;
     }
 
     @GetMapping
@@ -56,6 +60,8 @@ public class PedidoController {
         return pedidoRepository.findById(id).map(pedido ->
                 produtoRepository.findById(produtoId).map(produto -> {
                     Item item = new Item(qtde, produto);
+                    item.setPedido(pedido);
+                    itemRepository.save(item);
                     pedido.adicionarItem(item);
                     return ResponseEntity.ok(pedidoRepository.save(pedido));
                 }).orElse(ResponseEntity.notFound().build())

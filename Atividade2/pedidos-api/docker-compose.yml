@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: pedidos-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pedidosdb
+      MYSQL_USER: pedidos
+      MYSQL_PASSWORD: pedidos123
+    ports:
+      - "3306:3306"
+    volumes:
+      - pedidos_data:/var/lib/mysql
+
+volumes:
+  pedidos_data:
