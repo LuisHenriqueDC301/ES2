@@ -1,11 +1,22 @@
 # Pedidos API
 
-API REST construída com Spring Boot, Hibernate e banco H2 em memória.
+API REST construída com Spring Boot, Hibernate e MySQL.
 
 ## Pré-requisitos
 
 - Java 17+
 - Maven 3.8+
+
+
+```bash
+cp src/main/resources/application.properties.example src/main/resources/application.properties
+```
+
+Edite o arquivo e preencha a senha do banco:
+
+```properties
+spring.datasource.password=SUA_SENHA_AQUI
+```
 
 ## Como rodar
 
@@ -17,16 +28,6 @@ mvn -s .mvn/settings.xml spring-boot:run
 ```
 
 A aplicação sobe em `http://localhost:8080`.
-
-## Console H2
-
-Banco em memória acessível em `http://localhost:8080/h2-console`
-
-| Campo | Valor |
-|---|---|
-| JDBC URL | `jdbc:h2:mem:pedidosdb` |
-| Username | `sa` |
-| Password | _(vazio)_ |
 
 ---
 
