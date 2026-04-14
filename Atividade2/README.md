@@ -2,6 +2,9 @@
 
 Sistema simples de gerenciamento de pedidos e produtos.
 
+## Documentação
+A pasta `/docs/arquitetura` contém o diagrama de arquiteura de integração entre frontend -> backend -> Banco de Dados(My SQL)
+
 ## Tecnologias
 
 **Backend**
